@@ -1,0 +1,27 @@
+{
+    "name": "broom",
+    "description": "A Chrome extension for managing tab groups",
+    "version": "1.0",
+    "manifest_version": 3,
+    "icons": {
+        "16": "/img/tabs_16.png",
+        "32": "/img/tabs_32.png",
+        "48": "/img/tabs_48.png",
+        "128": "/img/tabs_128.png"
+    },
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "16": "/img/tabs_16.png",
+            "32": "/img/tabs_32.png",
+            "48": "/img/tabs_48.png",
+            "128": "/img/tabs_128.png"
+        }
+    },
+    "permissions": [
+        "storage",
+        "tabGroups",
+        "tabs"
+    ],
+    "options_page": "options.html"
+}
