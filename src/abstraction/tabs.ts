@@ -4,7 +4,7 @@
  * @param {?number} windowId The id of the window to put the new tab in (default to current window)
  * @return {Promise<chrome.tabs.Tab | Promise<chrome.tabs.Tab>[]>} Resolve to the tab object(s) of the newly created tab(s)
  */
-async function createTabs(urls: string | string[], windowId?: number): Promise<chrome.tabs.Tab | Promise<chrome.tabs.Tab>[]> {
+export async function createTabs(urls: string | string[], windowId?: number): Promise<chrome.tabs.Tab | Promise<chrome.tabs.Tab>[]> {
     if (Array.isArray(urls)) {
         return urls.map(async (url) => {
             return await chrome.tabs.create({url, windowId, active: false});
@@ -19,7 +19,7 @@ async function createTabs(urls: string | string[], windowId?: number): Promise<c
  * Close one or more tabs
  * @param {number | Array<number>} tabIds The id(s) of the tab(s) to be closed
  */
- async function closeTabs(tabIds: number | number[]) {
+export async function closeTabs(tabIds: number | number[]) {
     // @ts-ignore: Union type as param of overloaded function
     await chrome.tabs.remove(tabIds);
 }
@@ -29,7 +29,7 @@ async function createTabs(urls: string | string[], windowId?: number): Promise<c
  * @param {number} tabId The id of the tab to put in the new window
  * @return {Promise<chrome.windows.Window>} Resolve to the window object of the newly created window
  */
-function createWindow(tabId): Promise<chrome.windows.Window> {
+export function createWindow(tabId): Promise<chrome.windows.Window> {
     return chrome.windows.create({state: "maximized", tabId});
 }
 
@@ -41,7 +41,7 @@ function createWindow(tabId): Promise<chrome.windows.Window> {
  * @param {?number} windowId The id of the window to put the group in (default to current window)
  * @return {Promise<number>} The id of the group created
  */
-async function groupTabs(tabIds: number | number[], title?: string, color?: chrome.tabGroups.ColorEnum, windowId?: number): Promise<number> {
+export async function groupTabs(tabIds: number | number[], title?: string, color?: chrome.tabGroups.ColorEnum, windowId?: number): Promise<number> {
     let groupId = await chrome.tabs.group({createProperties: {windowId}, tabIds});
     await chrome.tabGroups.update(groupId, {title, color});
     return groupId;
@@ -52,7 +52,7 @@ async function groupTabs(tabIds: number | number[], title?: string, color?: chro
  * @param {number} groupId The id of the group to get all the tabs from
  * @return {Promise<Array<chrome.tabs.Tab>>} The tabs in the group
  */
-function getTabsInGroup(groupId: number): Promise<chrome.tabs.Tab[]> {
+export function getTabsInGroup(groupId: number): Promise<chrome.tabs.Tab[]> {
     return chrome.tabs.query({groupId});
 }
 
@@ -60,7 +60,7 @@ function getTabsInGroup(groupId: number): Promise<chrome.tabs.Tab[]> {
  * Close all tabs in a specific group
  * @param {number} groupId The id of the group to be closed
  */
-async function closeTabsInGroup(groupId: number) {
+export async function closeTabsInGroup(groupId: number) {
     let tabIds = (await getTabsInGroup(groupId)).map((tab) => {
         return tab.id;
     });
