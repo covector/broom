@@ -1,18 +1,13 @@
 /**
- * Create a new tab(s) from a url
- * @param {string | Array<string>} urls The url(s) of the webpage the new tab(s) will display
+ * Create a new tabs from a urls
+ * @param {Array<string>} urls The urls of the webpage the new tabs will display
  * @param {?number} windowId The id of the window to put the new tab in (default to current window)
- * @return {Promise<chrome.tabs.Tab | Promise<chrome.tabs.Tab>[]>} Resolve to the tab object(s) of the newly created tab(s)
+ * @return {Promise<chrome.tabs.Tab[]>} Resolve to the tab objects of the newly created tabs
  */
-export async function createTabs(urls: string | string[], windowId?: number): Promise<chrome.tabs.Tab | Promise<chrome.tabs.Tab>[]> {
-    if (Array.isArray(urls)) {
-        return urls.map(async (url) => {
-            return await chrome.tabs.create({url, windowId, active: false});
-        });
-    }
-    else {
-        return await chrome.tabs.create({url: urls, windowId, active: false});
-    }
+export async function createTabs(urls: string[], windowId?: number): Promise<chrome.tabs.Tab[]> {
+    return await Promise.all(urls.map(async (url) => {
+        return await chrome.tabs.create({url, windowId, active: false});
+    }));
 }
 
 /**
@@ -29,7 +24,7 @@ export async function closeTabs(tabIds: number | number[]) {
  * @param {number} tabId The id of the tab to put in the new window
  * @return {Promise<chrome.windows.Window>} Resolve to the window object of the newly created window
  */
-export function createWindow(tabId): Promise<chrome.windows.Window> {
+export function createWindow(tabId: number): Promise<chrome.windows.Window> {
     return chrome.windows.create({state: "maximized", tabId});
 }
 
@@ -45,6 +40,14 @@ export async function groupTabs(tabIds: number | number[], title?: string, color
     let groupId = await chrome.tabs.group({createProperties: {windowId}, tabIds});
     await chrome.tabGroups.update(groupId, {title, color});
     return groupId;
+}
+
+/**
+ * Get all present groups
+ * @returns All the groups in all windows
+ */
+export function getGroups(): Promise<chrome.tabGroups.TabGroup[]> {
+    return chrome.tabGroups.query({});
 }
 
 /**
