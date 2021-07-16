@@ -1,4 +1,5 @@
 import { getStored, setStored } from "../abstraction/store"
+import { getTabsInGroup } from "../abstraction/tabs";
 
 export interface StoredGroup {
     id: number,
@@ -22,7 +23,23 @@ export async function readGroups(): Promise<StoredGroup[]> {
 export async function writeGroup(newGroup: StoredGroup) {
     let newGroups = (await readGroups()).filter((group) => group.id != newGroup.id);
     newGroups.push(newGroup);
-    setStored("groups", newGroups);
+    await setStored("groups", newGroups);
+}
+
+/**
+ * Add a group from a window to the storage
+ * @param id The id of the group to be added to storage
+ */
+export async function addGroup(id: number) {
+    let group = await chrome.tabGroups.get(id);
+    let urls = (await getTabsInGroup(id)).map((tab) => tab.url);
+    let info: StoredGroup = {
+        id,
+        color: group.color,
+        title: group.title,
+        urls
+    }
+    await writeGroup(info);
 }
 
 /**
@@ -31,5 +48,5 @@ export async function writeGroup(newGroup: StoredGroup) {
  */
 export async function deleteGroup(id: number) {
     let newGroups = (await readGroups()).filter((group) => group.id != id);
-    setStored("groups", newGroups);
+    await setStored("groups", newGroups);
 }

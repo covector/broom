@@ -1,17 +1,44 @@
+import { setStored } from "../abstraction/store";
 import { closeTabsInGroup, createTabs, getGroups, groupTabs } from "../abstraction/tabs";
-import { readGroups, writeGroup } from "./groups_store";
+import { deleteGroup, readGroups, writeGroup } from "./groups_store";
 
 /**
  * Check whether a group is toggled on
  * @param id The id of the group to be checked
  * @returns Whether the group is already toggled on
  */
-async function groupIsOn(id: number): Promise<boolean> {
+export async function groupIsOn(id: number): Promise<boolean> {
     let presentGroups = await getGroups();
     for (let i = 0; i < presentGroups.length; i++) {
         if (presentGroups[i].id == id) { return true; }
     }
     return false;
+}
+
+/**
+ * Make sure that no stored group will conflict with a given id
+ * @param avoidId The group id that all the stored group must avoid
+ */
+async function conflictResolve(avoidId: number) {
+    let groups = await readGroups();
+    for (let i = 0; i < groups.length; i++) {
+        let id = groups[i].id;
+        while (true) {
+            if (id == avoidId) {
+                id++;
+                continue;
+            }
+            for (let j = 0; j < groups.length; j++) {
+                if (id == groups[j].id && i != j) {
+                    id++;
+                    continue;
+                }
+            }
+            break;
+        }
+        groups[i].id = id;
+    }
+    await setStored("groups", groups);
 }
 
 /**
@@ -23,13 +50,15 @@ export async function toggleGroupOn(id: number) {
     // No such group
     if (!groups.length) { return; }
     // Already toggled on
-    if (groupIsOn(id)) { return; }
+    if (await groupIsOn(id)) { return; }
     // Create group
     let group = groups[0];
     let tabIds = (await createTabs(group.urls)).map((tab) => tab.id);
-    let groupId = await groupTabs(tabIds);
+    let groupId = await groupTabs(tabIds, group.title, group.color);
     // Update id
+    await deleteGroup(group.id);
     group.id = groupId;
+    await conflictResolve(groupId);
     await writeGroup(group); 
 }
 
@@ -42,7 +71,7 @@ export async function toggleGroupOff(id: number) {
     // No such group
     if (!groups.length) { return; }
     // Already toggled off
-    if (!groupIsOn(id)) { return; }
+    if (!(await groupIsOn(id))) { return; }
     // Remove group
     await closeTabsInGroup(id);
 }
@@ -52,5 +81,5 @@ export async function toggleGroupOff(id: number) {
  * @param id The id of the group to be toggled
  */
 export async function toggleGroup(id: number) {
-    groupIsOn(id) ? await toggleGroupOff(id) : await toggleGroupOn(id);
+    (await groupIsOn(id)) ? await toggleGroupOff(id) : await toggleGroupOn(id);
 }

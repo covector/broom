@@ -55,8 +55,9 @@ export function getGroups(): Promise<chrome.tabGroups.TabGroup[]> {
  * @param {number} groupId The id of the group to get all the tabs from
  * @return {Promise<Array<chrome.tabs.Tab>>} The tabs in the group
  */
-export function getTabsInGroup(groupId: number): Promise<chrome.tabs.Tab[]> {
-    return chrome.tabs.query({groupId});
+export async function getTabsInGroup(groupId: number): Promise<chrome.tabs.Tab[]> {
+    // chrome.tabs.query({groupId}) doesn't work idk why
+    return (await chrome.tabs.query({})).filter((tab) => tab.groupId == groupId);
 }
 
 /**

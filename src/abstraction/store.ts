@@ -1,12 +1,13 @@
 /**
  * Get a value by giving its key in the sync storage
  * @param {string} key The key of the value to be retrieved
- * @param {Object} def The object to be returned if the key is not defined
+ * @param {?Object} def The object to be returned if the key is not defined
  * @return {Promise<object>} Resolve to the value retrieved
  */
-export function getStored(key: string, def: any): Promise<any> {
+export function getStored(key: string, def: any = undefined): Promise<any> {
     return new Promise((res) => {
-        chrome.storage.sync.get(key, ({ value }) => {
+        chrome.storage.sync.get(key, (object) => {
+            let value = object[key];
             res(value === undefined ? def : value);
         });
     });
