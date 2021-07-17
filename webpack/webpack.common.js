@@ -1,24 +1,34 @@
 const path = require("path");
 const srcDir = path.join(__dirname, "../src");
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
     entry: {
-        popup: path.join(srcDir, "ui/popup.ts")
+        popup: path.join(srcDir, "ui/popup.tsx")
     },
     output: {
         path: path.join(__dirname, "../dist/js"),
         filename: "[name].js",
     },
+    optimization: {
+        splitChunks: {
+            name: "vendor",
+            chunks: "initial",
+        },
+        minimizer: [new TerserPlugin({
+            extractComments: false,
+        })],
+    },
     module: {
         rules: [
             {
-                test: /\.ts$/,
+                test: /\.tsx?$/,
                 use: "ts-loader",
                 exclude: /node_modules/,
             },
         ],
     },
     resolve: {
-        extensions: [".ts", ".js"],
+        extensions: [".tsx", ".ts", ".js"],
     },
 };
