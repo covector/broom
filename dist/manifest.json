@@ -4,18 +4,18 @@
     "version": "1.0",
     "manifest_version": 3,
     "icons": {
-        "16": "img/icon_16.png",
-        "32": "img/icon_32.png",
-        "48": "img/icon_48.png",
-        "128": "img/icon_128.png"
+        "16": "img/broom_icon_16.png",
+        "32": "img/broom_icon_32.png",
+        "48": "img/broom_icon_48.png",
+        "128": "img/broom_icon_128.png"
     },
     "action": {
         "default_popup": "popup.html",
         "default_icon": {
-            "16": "img/icon_16.png",
-            "32": "img/icon_32.png",
-            "48": "img/icon_48.png",
-            "128": "img/icon_128.png"
+            "16": "img/broom_icon_16.png",
+            "32": "img/broom_icon_32.png",
+            "48": "img/broom_icon_48.png",
+            "128": "img/broom_icon_128.png"
         }
     },
     "permissions": [

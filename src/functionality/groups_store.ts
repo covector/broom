@@ -5,48 +5,62 @@ export interface StoredGroup {
     id: number,
     color: chrome.tabGroups.ColorEnum,
     title: string,
-    urls: string[]
+    urls: string[],
+    favIconUrl: string
 }
 
 /**
- * Reading all the groups stored
- * @return {Promise<Array<StoredGroup>>} Resolve to the array of stored groups
+ * Reading all the registered groups
+ * @return {Promise<Array<StoredGroup>>} Resolve to the array of registered groups
  */
-export async function readGroups(): Promise<StoredGroup[]> {
+export async function readRegistered(): Promise<StoredGroup[]> {
     return await getStored("groups", []) as StoredGroup[]; 
 }
 
 /**
- * Write a group to storage
- * @param {StoredGroup} newGroup The new group to be written 
+ * Create or replace a group in the storage
+ * @param {StoredGroup} newGroup The group to be created or replaced
  */
 export async function writeGroup(newGroup: StoredGroup) {
-    let newGroups = (await readGroups()).filter((group) => group.id != newGroup.id);
+    let newGroups = (await readRegistered()).filter((group) => {
+        if (group.id == newGroup.id) {
+            // fallback to original if none in new
+            if (!newGroup.favIconUrl) { newGroup.favIconUrl = group.favIconUrl; }
+            // delete original registered group
+            return false;
+        }
+        // keep other registered groups
+        return true;
+    });
     newGroups.push(newGroup);
     await setStored("groups", newGroups);
 }
 
 /**
- * Add a group from a window to the storage
- * @param id The id of the group to be added to storage
+ * Register an unregistered group or modify a registered group
+ * @param id The id of the target group
  */
-export async function addGroup(id: number) {
+export async function registerGroup(id: number) {
     let group = await chrome.tabGroups.get(id);
-    let urls = (await getTabsInGroup(id)).map((tab) => tab.url);
+    let tabs = await getTabsInGroup(id);
+    let urls = tabs.map((tab) => tab.url);
+    let tabsWithFavIcon = tabs.filter((tab) => tab.favIconUrl);
+    let favIconUrl = tabsWithFavIcon.length ? tabsWithFavIcon[0].favIconUrl : "";
     let info: StoredGroup = {
         id,
         color: group.color,
         title: group.title,
-        urls
+        urls,
+        favIconUrl
     }
     await writeGroup(info);
 }
 
 /**
- * Delete a group from storage 
- * @param {number} id The id of the group to be deleted
+ * Unregister a group
+ * @param {number} id The id of the group to be unregistered
  */
-export async function deleteGroup(id: number) {
-    let newGroups = (await readGroups()).filter((group) => group.id != id);
+export async function unregisterGroup(id: number) {
+    let newGroups = (await readRegistered()).filter((group) => group.id != id);
     await setStored("groups", newGroups);
 }

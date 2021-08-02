@@ -1,6 +1,6 @@
 import { setStored } from "../abstraction/store";
 import { closeTabsInGroup, createTabs, getGroups, groupTabs } from "../abstraction/tabs";
-import { deleteGroup, readGroups, writeGroup } from "./groups_store";
+import { unregisterGroup, readRegistered, writeGroup } from "./groups_store";
 
 /**
  * Check whether a group is toggled on
@@ -16,11 +16,11 @@ export async function groupIsOn(id: number): Promise<boolean> {
 }
 
 /**
- * Make sure that no stored group will conflict with a given id
- * @param avoidId The group id that all the stored group must avoid
+ * Make sure that no registered group will conflict with a given id
+ * @param avoidId The group id that all the registered group must avoid
  */
 async function conflictResolve(avoidId: number) {
-    let groups = await readGroups();
+    let groups = await readRegistered();
     for (let i = 0; i < groups.length; i++) {
         let id = groups[i].id;
         while (true) {
@@ -46,7 +46,7 @@ async function conflictResolve(avoidId: number) {
  * @param id The id of the group to be toggled on
  */
 export async function toggleGroupOn(id: number) {
-    let groups = (await readGroups()).filter((group) => group.id == id);
+    let groups = (await readRegistered()).filter((group) => group.id == id);
     // No such group
     if (!groups.length) { return; }
     // Already toggled on
@@ -56,7 +56,7 @@ export async function toggleGroupOn(id: number) {
     let tabIds = (await createTabs(group.urls)).map((tab) => tab.id);
     let groupId = await groupTabs(tabIds, group.title, group.color);
     // Update id
-    await deleteGroup(group.id);
+    await unregisterGroup(group.id);
     group.id = groupId;
     await conflictResolve(groupId);
     await writeGroup(group); 
@@ -67,7 +67,7 @@ export async function toggleGroupOn(id: number) {
  * @param id The id of the group to be toggled off
  */
 export async function toggleGroupOff(id: number) {
-    let groups = (await readGroups()).filter((group) => group.id == id);
+    let groups = (await readRegistered()).filter((group) => group.id == id);
     // No such group
     if (!groups.length) { return; }
     // Already toggled off

@@ -43,7 +43,7 @@ export async function groupTabs(tabIds: number | number[], title?: string, color
 }
 
 /**
- * Get all present groups
+ * Get all present groups (both registered and unregistered present)
  * @returns All the groups in all windows
  */
 export function getGroups(): Promise<chrome.tabGroups.TabGroup[]> {
