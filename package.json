@@ -5,7 +5,7 @@
   "author": "covector",
   "license": "MIT",
   "scripts": {
-    "dev": "webpack --config webpack/webpack.dev.js --watch",
+    "start": "webpack --config webpack/webpack.dev.js --watch",
     "build": "webpack --config webpack/webpack.prod.js"
   },
   "devDependencies": {
