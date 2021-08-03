@@ -72,6 +72,8 @@ export async function toggleGroupOff(id: number) {
     if (!groups.length) { return; }
     // Already toggled off
     if (!(await groupIsOn(id))) { return; }
+    // Update group
+
     // Remove group
     await closeTabsInGroup(id);
 }

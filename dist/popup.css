@@ -2,9 +2,50 @@
 
 body {
     margin: 0;
-    /* put bg color in page level instead */
     background-color: #E5E5E5;
     font-family: "Open Sans", sans-serif;
+}
+
+/* Popup */
+.popup {
+    height: 600px;
+    padding-top: 10px;
+    box-sizing: border-box;
+    /* Debug */
+    display: flex;
+}
+
+/* Registered Groups */
+.registeredGroups {
+    display: flex;
+    height: 580px;
+}
+
+/* Unregistered Groups */
+.unregisteredGroups {
+    display: flex;
+    height: 580px;
+    /* position: absolute; */
+    top: 10px;
+    /* transform: translateX(-100%); */
+}
+
+/* Select Cursor */
+.selectCursor {
+    position: relative;
+    height: 60px;
+    width: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    transition: transform 0.2s;
+}
+
+.selectCursor .box {
+    background-color: #BEBEBE;
+    width: 7px;
+    height: 45px;
+    border-radius: 4px;
 }
 
 /* Group Entry */
@@ -24,16 +65,7 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
-    border: 0px solid #000000;
-    transition: border-width 0.2s, background-color 0.2s, filter 0.2s;
-}
-
-.groupEntry .box.selected {
-    filter: brightness(0.5);
-}
-
-.groupEntry .box.on {
-    border-width: 3px;
+    transition: background-color 0.2s, filter 0.2s;
 }
 
 .groupEntry .box .icon {
@@ -68,6 +100,7 @@ body {
 
 .groupEntry .box.on .title {
     font-weight: 600;
+    color: #FFFFFF;
 }
 
 .groupEntry .box .order {
@@ -75,4 +108,15 @@ body {
     color: #b3b3b3;
     font-weight: 300;
     margin-right: 10px;
+}
+
+.groupEntry .box.on .order {
+    color: #EEEEEE;
+}
+
+.groupEntry .box .add {
+    margin-left: 10px;
+    font-size: 17px;
+    color: #8c8c8c;
+    font-weight: 600;
 }

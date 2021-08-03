@@ -5,8 +5,8 @@ interface GroupEntryProps {
     color: chrome.tabGroups.ColorEnum,
     title: string,
     order: number,
-    selected: boolean,
-    on: boolean
+    on: boolean,
+    registered: boolean
 }
 
 const color2Hex = {
@@ -20,28 +20,14 @@ const color2Hex = {
     "cyan": "78D9EC"
 }
 
-const color2HexLight = {
-    "grey": "e1e5ea",
-    "blue": "e1ecff",
-    "red": "f9e1df",
-    "yellow": "fff9e6",
-    "green": "d1ecd8",
-    "pink": "fbdfef",
-    "purple": "f9f2ff",
-    "cyan": "d8eef3"
-}
-
 export const GroupEntry = (props: GroupEntryProps) => {
-    let color = `#${color2Hex[props.color]}`;
-    let bgColor = `#${props.on ? color2HexLight[props.color] : "FFFFFF"}`
-    let state = "";
-    state += props.selected ? " selected" : "";
-    state += props.on ? " on" : "";
+    let onColor = (on) => `#${on ? color2Hex[props.color] : "FFFFFF"}`;
     return(
         <div className="groupEntry">
-            <div className={"box" + state} style={{borderColor: color, backgroundColor: bgColor}}>
+            <div className={"box" + (props.on ? " on" : "")} style={{backgroundColor: onColor(props.on)}}>
+                <div className="add" style={{display: props.registered ? "none" : "block"}}>+</div>
                 <div className="icon"><img src={props.imgUrl} /></div>
-                <div className="colorBar" style={{backgroundColor: color}}></div>
+                <div className="colorBar" style={{backgroundColor: onColor(!props.on)}}></div>
                 <div className="title">{props.title}</div>
                 <div className="order">{props.order}</div>
             </div>
