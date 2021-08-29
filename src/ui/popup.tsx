@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
+import { setStored } from "../abstraction/store";
 import { getTabsInGroup } from "../abstraction/tabs";
 import { readRegistered, readUnregistered } from "../functionality/groups_store";
 import { RegisteredGroups, UnregisteredGroups } from "./pages";
@@ -25,20 +26,24 @@ function Popup() {
     }
     useEffect(() => { updateRegistered(); }, []);
     // Revert changes
-    let savedGroups = useRef(null)
+    let savedGroups = useRef(null);
+    let manualUpdate = useRef(0);
     async function updateSaved() {
         savedGroups.current = await readRegistered();
     }
     useEffect(() => { updateSaved(); }, []);
     async function recover() {
         if (savedGroups.current) {
-            setRegisteredGroups(JSON.parse(JSON.stringify(savedGroups.current)));
+            manualUpdate.current++;
+            let save = JSON.parse(JSON.stringify(savedGroups.current));
+            await setStored("groups", save);
+            setRegisteredGroups(save);
         }
     }
     return (
         <div className="popup">
             <div className="topBar"></div>
-            <RegisteredGroups groups={registeredGroups} forceUpdate={updateRegistered} />
+            <RegisteredGroups groups={registeredGroups} forceUpdate={updateRegistered} manualUpdate={manualUpdate.current} />
             <UnregisteredGroups groups={unregisteredGroups} imgUrls={imgUrls} focus={isAddPage} forceUpdate={updateUnregistered} />
             <ToolBar toggleAddPage={toggleAddPage} recover={recover} />
         </div>

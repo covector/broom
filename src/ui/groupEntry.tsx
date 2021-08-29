@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import { getTabsInGroup } from "../abstraction/tabs";
 import { groupIsOn, toggleGroup } from "../functionality/groups_manage";
 
-interface GroupEntryProps {
+interface RegisteredEntryProps {
     imgUrl: string;
     color: chrome.tabGroups.ColorEnum;
     title: string;
     id: number;
     action: (id: number) => void;
+    manualUpdate: number;
 }
 
 const color2Hex = {
@@ -21,7 +22,7 @@ const color2Hex = {
     "cyan": "78D9EC"
 }
 
-export const RegisteredGroupEntry = (props: GroupEntryProps) => {
+export const RegisteredGroupEntry = (props: RegisteredEntryProps) => {
     let [id, setId] = useState(props.id);
     let [on, setOn] = useState(false);
     let [hover, setHover] = useState(false);
@@ -29,8 +30,8 @@ export const RegisteredGroupEntry = (props: GroupEntryProps) => {
     async function checkOn(id) {
         setOn(await groupIsOn(id));
     }
-    useEffect(() => { checkOn(props.id); }, []);
-    useEffect(() => { setId(props.id); }, [props.id]);
+    console.log(props.manualUpdate);
+    useEffect(() => { checkOn(props.id); setId(props.id); }, [props.id, props.manualUpdate]);
     let onColor = (isOn) => `#${isOn ? color2Hex[props.color] : "FFFFFF"}`;
     return(
         <div className="groupEntry">
@@ -78,7 +79,15 @@ export const RegisteredGroupEntry = (props: GroupEntryProps) => {
     );
 }
 
-export const UnregisteredGroupEntry = (props: GroupEntryProps) => {
+interface UnregisteredEntryProps {
+    imgUrl: string;
+    color: chrome.tabGroups.ColorEnum;
+    title: string;
+    id: number;
+    action: (id: number) => void;
+}
+
+export const UnregisteredGroupEntry = (props: UnregisteredEntryProps) => {
     let [actionHover, setActionHover] = useState(false);
     let color = color2Hex[props.color];
     return(

@@ -17,6 +17,10 @@ export async function readRegistered(): Promise<StoredGroup[]> {
     return await getStored("groups", []) as StoredGroup[]; 
 }
 
+/**
+ * Reading all the unregistered groups
+ * @returns {Promise<chrome.tabGroups.TabGroup[]>} Resolve to the array of unregistered groups
+ */
 export async function readUnregistered(): Promise<chrome.tabGroups.TabGroup[]> {
     let allGroups = await getGroups();
     let registeredGroups = await readRegistered();
