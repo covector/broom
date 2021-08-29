@@ -44,8 +44,9 @@ async function conflictResolve(avoidId: number) {
 /**
  * Toggle a group off. Will have no effect if group doesn't exist or is already toggled
  * @param id The id of the group to be toggled on
+ * @return {Promise<number>} The new id of the group toggled on
  */
-export async function toggleGroupOn(id: number) {
+export async function toggleGroupOn(id: number): Promise<number> {
     let groups = (await readRegistered()).filter((group) => group.id == id);
     // No such group
     if (!groups.length) { return; }
@@ -60,13 +61,15 @@ export async function toggleGroupOn(id: number) {
     group.id = groupId;
     await conflictResolve(groupId);
     await writeGroup(group); 
+    return groupId;
 }
 
 /**
  * Toggle a group off. Will have no effect if group doesn't exist or is not toggled on
  * @param id The id of the group to be toggled off
+ * @return {Promise<number>} The new id of the group toggled off
  */
-export async function toggleGroupOff(id: number) {
+export async function toggleGroupOff(id: number): Promise<number> {
     let groups = (await readRegistered()).filter((group) => group.id == id);
     // No such group
     if (!groups.length) { return; }
@@ -76,12 +79,14 @@ export async function toggleGroupOff(id: number) {
 
     // Remove group
     await closeTabsInGroup(id);
+    return id;
 }
 
 /**
  * Toggle a group. Will have no effect if group doesn't exist
  * @param id The id of the group to be toggled
+ * @return {Promise<number>} The new id of the group toggled
  */
-export async function toggleGroup(id: number) {
-    (await groupIsOn(id)) ? await toggleGroupOff(id) : await toggleGroupOn(id);
+export async function toggleGroup(id: number): Promise<number> {
+    return (await groupIsOn(id)) ? await toggleGroupOff(id) : await toggleGroupOn(id);
 }

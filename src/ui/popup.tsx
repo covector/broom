@@ -1,29 +1,46 @@
-import React, { useEffect, useState, useRef, useMemo } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
+import { getTabsInGroup } from "../abstraction/tabs";
+import { readRegistered, readUnregistered } from "../functionality/groups_store";
 import { RegisteredGroups, UnregisteredGroups } from "./pages";
+import { ToolBar } from "./toolbar";
 
 function Popup() {
     let [isAddPage, setIsAddPage] = useState(false);
-    let addPage = useRef(null);
-    let mainPage = useRef(null);
-    const keyDownHandler = (e: KeyboardEvent) => {
-        // console.log(e.key);
-        // Switch between add page and main page
-        if (e.key == "`") {
-            isAddPage ? mainPage.current.forceUpdate() : addPage.current.forceUpdate();
-            setIsAddPage(!isAddPage);
+    let [unregisteredGroups, setUnregisteredGroups] = useState([]);
+    let [registeredGroups, setRegisteredGroups] = useState([]);
+    let [imgUrls, setImgUrls] = useState(null);
+    // Updating
+    async function updateUnregistered() {
+        let groups = await readUnregistered();
+        setImgUrls(await Promise.all(groups.map(async (group) => (await getTabsInGroup(group.id))[0].favIconUrl)));
+        setUnregisteredGroups(groups);
+    }
+    async function updateRegistered() {
+        setRegisteredGroups(await readRegistered());
+    }
+    function toggleAddPage() {
+        isAddPage ? updateRegistered() : updateUnregistered();
+        setIsAddPage(!isAddPage);
+    }
+    useEffect(() => { updateRegistered(); }, []);
+    // Revert changes
+    let savedGroups = useRef(null)
+    async function updateSaved() {
+        savedGroups.current = await readRegistered();
+    }
+    useEffect(() => { updateSaved(); }, []);
+    async function recover() {
+        if (savedGroups.current) {
+            setRegisteredGroups(JSON.parse(JSON.stringify(savedGroups.current)));
         }
-        // Pass down to corresponding child
-        isAddPage ? addPage.current.keyDownHandler(e) : mainPage.current.keyDownHandler(e);
-    };
-    useEffect(() => {
-        document.addEventListener("keydown", keyDownHandler);
-        return () => document.removeEventListener("keydown", keyDownHandler);
-    });
+    }
     return (
-        <div className="popup" onKeyDown={()=>console.log("hi")}>
-            <RegisteredGroups ref={mainPage} focus={!isAddPage} />
-            <UnregisteredGroups ref={addPage} focus={isAddPage} />
+        <div className="popup">
+            <div className="topBar"></div>
+            <RegisteredGroups groups={registeredGroups} forceUpdate={updateRegistered} />
+            <UnregisteredGroups groups={unregisteredGroups} imgUrls={imgUrls} focus={isAddPage} forceUpdate={updateUnregistered} />
+            <ToolBar toggleAddPage={toggleAddPage} recover={recover} />
         </div>
     );
 }

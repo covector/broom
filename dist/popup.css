@@ -9,43 +9,70 @@ body {
 /* Popup */
 .popup {
     height: 600px;
-    padding-top: 10px;
+    width: 250px;
     box-sizing: border-box;
-    /* Debug */
+}
+
+/* TopBar */
+.topBar {
+    z-index: 2;
+    position: relative;
+    width: 100%;
+    height: 4px;
+    box-shadow: 0 0 10px 10px #E5E5E5;
+}
+
+/* ToolBar */
+.toolBar {
+    z-index: 2;
+    position: relative;
+    width: 100%;
+    height: 40px;
+    background-color: #c5c5c5;
+    box-shadow: 0 0 10px 10px #E5E5E5;
     display: flex;
+}
+
+/* ScrollBar */
+.scrollbar::-webkit-scrollbar {
+    width: 5px;
+}
+   
+.scrollbar::-webkit-scrollbar-track {
+    background-color: #E5E5E5;
+}
+   
+.scrollbar::-webkit-scrollbar-thumb {
+    background-color: #c4c4c4;
+    border-radius: 5px;
 }
 
 /* Registered Groups */
 .registeredGroups {
-    display: flex;
-    height: 580px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    width: 246px;
+    height: 556px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: #E5E5E5;
 }
 
 /* Unregistered Groups */
 .unregisteredGroups {
-    display: flex;
-    height: 580px;
-    /* position: absolute; */
-    top: 10px;
-    /* transform: translateX(-100%); */
-}
-
-/* Select Cursor */
-.selectCursor {
-    position: relative;
-    height: 60px;
-    width: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    transition: transform 0.2s;
-}
-
-.selectCursor .box {
-    background-color: #BEBEBE;
-    width: 7px;
-    height: 45px;
-    border-radius: 4px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    width: 246px;
+    height: 556px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: absolute;
+    top: 4px;
+    transform: translateY(100%);
+    transition: transform 0.3s;
+    background-color: #E5E5E5;
 }
 
 /* Group Entry */
@@ -103,20 +130,7 @@ body {
     color: #FFFFFF;
 }
 
-.groupEntry .box .order {
-    font-size: 11px;
-    color: #b3b3b3;
-    font-weight: 300;
+.groupEntry .box .action {
+    width: 10px;
     margin-right: 10px;
-}
-
-.groupEntry .box.on .order {
-    color: #EEEEEE;
-}
-
-.groupEntry .box .add {
-    margin-left: 10px;
-    font-size: 17px;
-    color: #8c8c8c;
-    font-weight: 600;
 }

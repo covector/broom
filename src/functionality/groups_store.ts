@@ -1,12 +1,12 @@
 import { getStored, setStored } from "../abstraction/store"
-import { getTabsInGroup } from "../abstraction/tabs";
+import { getGroups, getTabsInGroup } from "../abstraction/tabs";
 
 export interface StoredGroup {
-    id: number,
-    color: chrome.tabGroups.ColorEnum,
-    title: string,
-    urls: string[],
-    favIconUrl: string
+    id: number;
+    color: chrome.tabGroups.ColorEnum;
+    title: string;
+    urls: string[];
+    favIconUrl: string;
 }
 
 /**
@@ -15,6 +15,12 @@ export interface StoredGroup {
  */
 export async function readRegistered(): Promise<StoredGroup[]> {
     return await getStored("groups", []) as StoredGroup[]; 
+}
+
+export async function readUnregistered(): Promise<chrome.tabGroups.TabGroup[]> {
+    let allGroups = await getGroups();
+    let registeredGroups = await readRegistered();
+    return allGroups.filter((group) => !registeredGroups.some((registered) => registered.id == group.id));
 }
 
 /**
