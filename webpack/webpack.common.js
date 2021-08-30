@@ -4,7 +4,8 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
     entry: {
-        popup: path.join(srcDir, "ui/popup.tsx")
+        popup: path.join(srcDir, "ui/popup.tsx"),
+        options: path.join(srcDir, "options/options.tsx"),
     },
     output: {
         path: path.join(__dirname, "../dist/js"),

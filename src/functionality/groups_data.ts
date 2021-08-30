@@ -24,7 +24,12 @@ export async function exportData(): Promise<string> {
  * @return {Promise<boolean>} Whether the import is successful
  */
 export async function importData(stringified: string): Promise<boolean> {
-    let registeredWithoutId: StoredGroupWithoutId[] = JSON.parse(stringified);
+    let registeredWithoutId: StoredGroupWithoutId[];
+    try {
+        registeredWithoutId = JSON.parse(stringified);
+    } catch(e) {
+        return false;
+    }
     // Validate data
     for (let i = 0; i < registeredWithoutId.length; i++) {
         let group = registeredWithoutId[i];
