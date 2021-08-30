@@ -1,6 +1,6 @@
 import { setStored } from "../abstraction/store";
 import { closeTabsInGroup, createTabs, getGroups, groupTabs } from "../abstraction/tabs";
-import { unregisterGroup, readRegistered, writeGroup, registerGroup, StoredGroup } from "./groups_store";
+import { readRegistered, registerGroup, StoredGroup } from "./groups_store";
 
 /**
  * Check whether a group is toggled on

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { getTabsInGroup } from "../abstraction/tabs";
 import { groupIsOn, toggleGroup } from "../functionality/groups_manage";
 
 interface RegisteredEntryProps {
@@ -23,6 +22,7 @@ const color2Hex = {
 }
 
 export const RegisteredGroupEntry = (props: RegisteredEntryProps) => {
+    let [block, setBlock] = useState(false);
     let [on, setOn] = useState(false);
     let [hover, setHover] = useState(false);
     let [actionHover, setActionHover] = useState(false);
@@ -30,17 +30,26 @@ export const RegisteredGroupEntry = (props: RegisteredEntryProps) => {
         setOn(await groupIsOn(id));
     }
     useEffect(() => { checkOn(props.id); });
+    async function toggle() {
+        if (block) {
+            await toggleGroup(props.id);
+            await props.forceUpdate();
+            setTimeout(() => setBlock(false), 3500);
+        }
+    }
+    useEffect(() => { toggle(); }, [block])
     let onColor = (isOn) => `#${isOn ? color2Hex[props.color] : "FFFFFF"}`;
     return(
-        <div className="groupEntry">
+        <div className="groupEntry registeredEntry">
             <div className={"box" + (on ? " on" : "")}
             style={{
                 backgroundColor: onColor(on),
                 filter: `brightness(${hover ? 0.5 : 1})`
             }}
-            onClick={async () => {
-                await toggleGroup(props.id);
-                await props.forceUpdate();
+            onClick={() => {
+                if (!block) {
+                    setBlock(true);
+                }
             }}
             onMouseOver={() => {
                 setHover(true);
@@ -88,7 +97,7 @@ export const UnregisteredGroupEntry = (props: UnregisteredEntryProps) => {
     let [actionHover, setActionHover] = useState(false);
     let color = color2Hex[props.color];
     return(
-        <div className="groupEntry">
+        <div className="groupEntry unregisteredEntry">
             <div className="box">
                 <div className="icon"><img src={props.imgUrl} /></div>
                 <div className="colorBar" style={{backgroundColor: `#${color}`}}></div>
