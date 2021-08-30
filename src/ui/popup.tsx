@@ -27,14 +27,12 @@ function Popup() {
     useEffect(() => { updateRegistered(); }, []);
     // Revert changes
     let savedGroups = useRef(null);
-    let manualUpdate = useRef(0);
     async function updateSaved() {
         savedGroups.current = await readRegistered();
     }
     useEffect(() => { updateSaved(); }, []);
     async function recover() {
         if (savedGroups.current) {
-            manualUpdate.current++;
             let save = JSON.parse(JSON.stringify(savedGroups.current));
             await setStored("groups", save);
             setRegisteredGroups(save);
@@ -43,7 +41,7 @@ function Popup() {
     return (
         <div className="popup">
             <div className="topBar"></div>
-            <RegisteredGroups groups={registeredGroups} forceUpdate={updateRegistered} manualUpdate={manualUpdate.current} />
+            <RegisteredGroups groups={registeredGroups} forceUpdate={updateRegistered} />
             <UnregisteredGroups groups={unregisteredGroups} imgUrls={imgUrls} focus={isAddPage} forceUpdate={updateUnregistered} />
             <ToolBar toggleAddPage={toggleAddPage} recover={recover} />
         </div>

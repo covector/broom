@@ -8,7 +8,7 @@ interface RegisteredEntryProps {
     title: string;
     id: number;
     action: (id: number) => void;
-    manualUpdate: number;
+    forceUpdate: () => void;
 }
 
 const color2Hex = {
@@ -23,15 +23,13 @@ const color2Hex = {
 }
 
 export const RegisteredGroupEntry = (props: RegisteredEntryProps) => {
-    let [id, setId] = useState(props.id);
     let [on, setOn] = useState(false);
     let [hover, setHover] = useState(false);
     let [actionHover, setActionHover] = useState(false);
     async function checkOn(id) {
         setOn(await groupIsOn(id));
     }
-    console.log(props.manualUpdate);
-    useEffect(() => { checkOn(props.id); setId(props.id); }, [props.id, props.manualUpdate]);
+    useEffect(() => { checkOn(props.id); });
     let onColor = (isOn) => `#${isOn ? color2Hex[props.color] : "FFFFFF"}`;
     return(
         <div className="groupEntry">
@@ -41,9 +39,8 @@ export const RegisteredGroupEntry = (props: RegisteredEntryProps) => {
                 filter: `brightness(${hover ? 0.5 : 1})`
             }}
             onClick={async () => {
-                let newId = await toggleGroup(id);
-                setId(newId);
-                checkOn(newId);
+                await toggleGroup(props.id);
+                await props.forceUpdate();
             }}
             onMouseOver={() => {
                 setHover(true);
@@ -59,7 +56,7 @@ export const RegisteredGroupEntry = (props: RegisteredEntryProps) => {
                 className="action"
                 onClick={(e) => {
                     e.stopPropagation();
-                    props.action(id);
+                    props.action(props.id);
                 }}
                 onMouseOver={(e) => {
                     e.stopPropagation();

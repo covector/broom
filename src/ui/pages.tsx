@@ -5,7 +5,6 @@ import { RegisteredGroupEntry, UnregisteredGroupEntry } from "./groupEntry";
 interface RegisteredGroupsProps {
     groups: StoredGroup[];
     forceUpdate: () => void;
-    manualUpdate: number;
 }
 
 export function RegisteredGroups (props: RegisteredGroupsProps) {
@@ -20,7 +19,7 @@ export function RegisteredGroups (props: RegisteredGroupsProps) {
             await unregisterGroup(id);
             props.forceUpdate();
         }}
-        manualUpdate={props.manualUpdate}
+        forceUpdate={props.forceUpdate}
         />
     );
     return(

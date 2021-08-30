@@ -1,6 +1,6 @@
 import { setStored } from "../abstraction/store";
 import { closeTabsInGroup, createTabs, getGroups, groupTabs } from "../abstraction/tabs";
-import { unregisterGroup, readRegistered, writeGroup, registerGroup } from "./groups_store";
+import { unregisterGroup, readRegistered, writeGroup, registerGroup, StoredGroup } from "./groups_store";
 
 /**
  * Check whether a group is toggled on
@@ -18,6 +18,7 @@ export async function groupIsOn(id: number): Promise<boolean> {
 /**
  * Make sure that no registered group will conflict with a given id
  * @param avoidId The group id that all the registered group must avoid
+ * @return {Promise<StoredGroup[]>} The conflict-less registered gorups
  */
 async function conflictResolve(avoidId: number) {
     let groups = await readRegistered();
@@ -38,7 +39,7 @@ async function conflictResolve(avoidId: number) {
         }
         groups[i].id = id;
     }
-    await setStored("groups", groups);
+    return groups;
 }
 
 /**
@@ -47,20 +48,26 @@ async function conflictResolve(avoidId: number) {
  * @return {Promise<number>} The new id of the group toggled on
  */
 export async function toggleGroupOn(id: number): Promise<number> {
-    let groups = (await readRegistered()).filter((group) => group.id == id);
+    let registered = await readRegistered();
+    let index = -1;
+    for (let i = 0; i < registered.length; i++) {
+        if (registered[i].id == id) {
+            index = i;
+            break;
+        }
+    }
     // No such group
-    if (!groups.length) { return; }
+    if (index < 0) { return; }
     // Already toggled on
     if (await groupIsOn(id)) { return; }
     // Create group
-    let group = groups[0];
+    let group = registered[index];
     let tabIds = (await createTabs(group.urls)).map((tab) => tab.id);
     let groupId = await groupTabs(tabIds, group.title, group.color);
     // Update id
-    await unregisterGroup(group.id);
-    group.id = groupId;
-    await conflictResolve(groupId);
-    await writeGroup(group); 
+    let conflictless = await conflictResolve(groupId);
+    conflictless[index].id = groupId;
+    await setStored("groups", conflictless);
     return groupId;
 }
 
