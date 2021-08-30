@@ -44,7 +44,7 @@ export const RegisteredGroupEntry = (props: RegisteredEntryProps) => {
             <div className={"box" + (on ? " on" : "")}
             style={{
                 backgroundColor: onColor(on),
-                filter: `brightness(${hover ? 0.5 : 1})`
+                filter: `brightness(${hover ? 0.8 : 1})`
             }}
             onClick={() => {
                 if (!block) {
