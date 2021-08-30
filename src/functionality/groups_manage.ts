@@ -1,6 +1,6 @@
 import { setStored } from "../abstraction/store";
 import { closeTabsInGroup, createTabs, getGroups, groupTabs } from "../abstraction/tabs";
-import { unregisterGroup, readRegistered, writeGroup } from "./groups_store";
+import { unregisterGroup, readRegistered, writeGroup, registerGroup } from "./groups_store";
 
 /**
  * Check whether a group is toggled on
@@ -76,7 +76,7 @@ export async function toggleGroupOff(id: number): Promise<number> {
     // Already toggled off
     if (!(await groupIsOn(id))) { return; }
     // Update group
-
+    await registerGroup(id);
     // Remove group
     await closeTabsInGroup(id);
     return id;

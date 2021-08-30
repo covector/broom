@@ -32,18 +32,19 @@ export async function readUnregistered(): Promise<chrome.tabGroups.TabGroup[]> {
  * @param {StoredGroup} newGroup The group to be created or replaced
  */
 export async function writeGroup(newGroup: StoredGroup) {
-    let newGroups = (await readRegistered()).filter((group) => {
-        if (group.id == newGroup.id) {
+    let registered = await readRegistered();
+    let overwrite = false;
+    for (let i = 0; i < registered.length; i++) {
+        if (registered[i].id == newGroup.id) {
             // fallback to original if none in new
-            if (!newGroup.favIconUrl) { newGroup.favIconUrl = group.favIconUrl; }
-            // delete original registered group
-            return false;
+            if (!newGroup.favIconUrl) { newGroup.favIconUrl = registered[i].favIconUrl; }
+            registered[i] = newGroup;
+            overwrite = true;
+            break;
         }
-        // keep other registered groups
-        return true;
-    });
-    newGroups.push(newGroup);
-    await setStored("groups", newGroups);
+    }
+    if (!overwrite) { registered.push(newGroup); }
+    await setStored("groups", registered);
 }
 
 /**
