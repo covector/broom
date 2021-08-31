@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import { setStored } from "../abstraction/store";
 import { getTabsInGroup } from "../abstraction/tabs";
-import { readRegistered, readUnregistered } from "../functionality/groups_store";
+import { computeIcon, readRegistered, readUnregistered } from "../functionality/groups_store";
 import { RegisteredGroups, UnregisteredGroups } from "./pages";
 import { ToolBar } from "./toolbar";
 
@@ -14,7 +14,7 @@ function Popup() {
     // Updating
     async function updateUnregistered() {
         let groups = await readUnregistered();
-        setImgUrls(await Promise.all(groups.map(async (group) => (await getTabsInGroup(group.id))[0].favIconUrl)));
+        setImgUrls(await Promise.all(groups.map(async (group) => computeIcon(await getTabsInGroup(group.id)))));
         setUnregisteredGroups(groups);
     }
     async function updateRegistered() {

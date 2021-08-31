@@ -47,6 +47,14 @@ export async function writeGroup(newGroup: StoredGroup) {
     await setStored("groups", registered);
 }
 
+export function computeIcon(tabs: chrome.tabs.Tab[]) {
+    let urls = tabs.map((tab) => tab.url);
+    let tabsWithFavIcon = tabs.filter((tab) => tab.favIconUrl);
+    let autoIcon = tabsWithFavIcon.length ? tabsWithFavIcon[0].favIconUrl : "";
+    let manualIcon = urls[0];
+    return manualIcon.search(/\.(svg)|(png)|(ico)$/) >= 0 ? manualIcon : autoIcon;
+}
+
 /**
  * Register an unregistered group or modify a registered group
  * @param id The id of the target group
@@ -55,10 +63,7 @@ export async function registerGroup(id: number) {
     let group = await chrome.tabGroups.get(id);
     let tabs = await getTabsInGroup(id);
     let urls = tabs.map((tab) => tab.url);
-    let tabsWithFavIcon = tabs.filter((tab) => tab.favIconUrl);
-    let autoIcon = tabsWithFavIcon.length ? tabsWithFavIcon[0].favIconUrl : "";
-    let manualIcon = urls[0];
-    let favIconUrl = manualIcon.search(/\.(svg)|(png)|(ico)$/) >= 0 ? manualIcon : autoIcon;
+    let favIconUrl = computeIcon(tabs);
     let info: StoredGroup = {
         id,
         color: group.color,
