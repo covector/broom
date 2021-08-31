@@ -56,7 +56,9 @@ export async function registerGroup(id: number) {
     let tabs = await getTabsInGroup(id);
     let urls = tabs.map((tab) => tab.url);
     let tabsWithFavIcon = tabs.filter((tab) => tab.favIconUrl);
-    let favIconUrl = tabsWithFavIcon.length ? tabsWithFavIcon[0].favIconUrl : "";
+    let autoIcon = tabsWithFavIcon.length ? tabsWithFavIcon[0].favIconUrl : "";
+    let manualIcon = urls[0];
+    let favIconUrl = manualIcon.search(/\.(svg)|(png)|(ico)$/) >= 0 ? manualIcon : autoIcon;
     let info: StoredGroup = {
         id,
         color: group.color,

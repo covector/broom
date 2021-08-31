@@ -26,7 +26,7 @@ function Options() {
         chrome.downloads.download({
             url,
             filename: "broom_data.json"
-        });
+        }, () => URL.revokeObjectURL(url));
     }
     return(
         <div>
