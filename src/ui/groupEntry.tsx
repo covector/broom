@@ -34,7 +34,7 @@ export const RegisteredGroupEntry = (props: RegisteredEntryProps) => {
         if (block) {
             await toggleGroup(props.id);
             await props.forceUpdate();
-            setTimeout(() => setBlock(false), 3500);
+            setBlock(false);
         }
     }
     useEffect(() => { toggle(); }, [block])

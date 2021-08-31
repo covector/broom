@@ -1,5 +1,5 @@
 import { setStored } from "../abstraction/store";
-import { closeTabsInGroup, createTabs, getGroups, groupTabs } from "../abstraction/tabs";
+import { closeTabsInGroup, createTabs, getGroups, getTabsInGroup, groupTabs } from "../abstraction/tabs";
 import { readRegistered, registerGroup, StoredGroup } from "./groups_store";
 
 /**
@@ -57,9 +57,9 @@ export async function toggleGroupOn(id: number): Promise<number> {
         }
     }
     // No such group
-    if (index < 0) { return; }
+    if (index < 0) { return -1; }
     // Already toggled on
-    if (await groupIsOn(id)) { return; }
+    if (await groupIsOn(id)) { return -1; }
     // Create group
     let group = registered[index];
     let tabIds = (await createTabs(group.urls)).map((tab) => tab.id);
@@ -79,9 +79,12 @@ export async function toggleGroupOn(id: number): Promise<number> {
 export async function toggleGroupOff(id: number): Promise<number> {
     let groups = (await readRegistered()).filter((group) => group.id == id);
     // No such group
-    if (!groups.length) { return; }
+    if (!groups.length) { return -1; }
     // Already toggled off
-    if (!(await groupIsOn(id))) { return; }
+    if (!(await groupIsOn(id))) { return -1; }
+    // Check if any of the tabs are still loading
+    let stillLoading = (await getTabsInGroup(id)).some((tab) => !tab.url);
+    if (stillLoading) { return -1; }
     // Update group
     await registerGroup(id);
     // Remove group

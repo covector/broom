@@ -19,8 +19,8 @@ OR<br />
 Click the small minus button on the group you want to unregister
 
 ## Toggle ON/OFF a Registered Group
-Click the group you want to toggle in the main menu, there will be a 3.5s cooldown between each toggle.<br />
-When you toggle off, all changes to the group will be saved.
+Click the group you want to toggle in the main menu<br />
+When you toggle off, all changes to the group will be saved<br />
 
 ## Revert Changes
 When you open the menu, a copy of all the current registered group is saved somewhere<br />
