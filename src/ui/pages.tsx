@@ -1,29 +1,35 @@
 import React from "react";
+import { groupIsOn } from "../functionality/groups_manage";
 import { registerGroup, StoredGroup, unregisterGroup } from "../functionality/groups_store";
-import { RegisteredGroupEntry, UnregisteredGroupEntry } from "./groupEntry";
+import { GroupEntry } from "./groupEntry";
+import { AddIcon, RemoveIcon } from "./icons";
 
 interface RegisteredGroupsProps {
     groups: StoredGroup[];
     forceUpdate: () => void;
+    isInRemoveMode: boolean;
 }
 
 export function RegisteredGroups (props: RegisteredGroupsProps) {
     let groupEntries = props.groups.map((group, index) =>
-        <RegisteredGroupEntry
-        imgUrl={group.favIconUrl}
+        <GroupEntry
         color={group.color}
         title={group.title}
-        id={group.id}
+        imgUrl={group.favIconUrl}
         key={index}
-        action={async (id)=>{
-            await unregisterGroup(id);
-            props.forceUpdate();
+        action={async ()=>{
+            await unregisterGroup(group.id);
+            await props.forceUpdate();
         }}
-        forceUpdate={props.forceUpdate}
+        checkOn={async () => {
+            return await groupIsOn(group.id);
+        }}
+        className={props.isInRemoveMode ? "remove registered" : "registered"}
+        backIcon={RemoveIcon}
         />
     );
     return(
-        <div className="registeredGroups scrollbar">
+        <div className="registered-groups scrollbar">
             {groupEntries}
         </div>
     );
@@ -32,26 +38,28 @@ export function RegisteredGroups (props: RegisteredGroupsProps) {
 interface UnregisteredGroupsProps {
     groups: chrome.tabGroups.TabGroup[];
     imgUrls: null | string[];
-    focus: boolean;
+    isInAddPage: boolean;
     forceUpdate: () => void;
 }
 
 export function UnregisteredGroups (props: UnregisteredGroupsProps) {
     let groupEntries = props.groups.map((group, index) => 
-        <UnregisteredGroupEntry
+        <GroupEntry
         color={group.color}
         title={group.title}
         imgUrl={props.imgUrls ? props.imgUrls[index] : ""}
-        id={group.id}
         key={index}
-        action={async (id) => {
-            await registerGroup(id);
+        action={async () => {
+            await registerGroup(group.id);
             props.forceUpdate();
         }}
+        className="unregistered"
+        checkOn={() => false}
+        backIcon={AddIcon}
         />
     );
     return(
-        <div className="unregisteredGroups scrollbar" style={{transform: `translateY(${props.focus ? 0 : 100}%)`}}>
+        <div className="unregistered-groups scrollbar" style={{transform: `translateY(${props.isInAddPage ? 0 : 100}%)`}}>
             {groupEntries}
         </div>
     );

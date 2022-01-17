@@ -7,11 +7,11 @@ import { RegisteredGroups, UnregisteredGroups } from "./pages";
 import { ToolBar } from "./toolbar";
 
 function Popup() {
-    let [isAddPage, setIsAddPage] = useState(false);
+    // STORAGE
     let [unregisteredGroups, setUnregisteredGroups] = useState([]);
     let [registeredGroups, setRegisteredGroups] = useState([]);
     let [imgUrls, setImgUrls] = useState(null);
-    // Updating
+    // Updating pages
     async function updateUnregistered() {
         let groups = await readUnregistered();
         setImgUrls(await Promise.all(groups.map(async (group) => computeIcon(await getTabsInGroup(group.id)))));
@@ -20,12 +20,27 @@ function Popup() {
     async function updateRegistered() {
         setRegisteredGroups(await readRegistered());
     }
-    function toggleAddPage() {
-        isAddPage ? updateRegistered() : updateUnregistered();
-        setIsAddPage(!isAddPage);
-    }
     useEffect(() => { updateRegistered(); }, []);
-    // Revert changes
+
+    // PAGES MANAGEMENT
+    // 0 or others: Default page
+    // 1: Add groups
+    // 2: Remove groups
+    let [page, setPage] = useState(0);
+    // Button click in toolbar
+    function toggleAddPage() {
+        const isInAddPage = page == 1;
+        isInAddPage ? updateRegistered() : updateUnregistered();
+        setPage(isInAddPage ? 0 : 1);
+    }
+    function toggleRemoveMode() {
+        const isInRemoveMode = page == 2;
+        if (page != 1) {
+            setPage(isInRemoveMode ? 0 : 2);
+        }
+    } 
+    
+    // UNDOING CHANGES
     let savedGroups = useRef(null);
     async function updateSaved() {
         savedGroups.current = await readRegistered();
@@ -38,12 +53,13 @@ function Popup() {
             setRegisteredGroups(save);
         }
     }
+
     return (
         <div className="popup">
-            <div className="topBar"></div>
-            <RegisteredGroups groups={registeredGroups} forceUpdate={updateRegistered} />
-            <UnregisteredGroups groups={unregisteredGroups} imgUrls={imgUrls} focus={isAddPage} forceUpdate={updateUnregistered} />
-            <ToolBar toggleAddPage={toggleAddPage} recover={recover} />
+            <div className="topbar"></div>
+            <RegisteredGroups groups={registeredGroups} forceUpdate={updateRegistered} isInRemoveMode={page == 2} />
+            <UnregisteredGroups groups={unregisteredGroups} forceUpdate={updateUnregistered} imgUrls={imgUrls} isInAddPage={page == 1} />
+            <ToolBar toggleAddPage={toggleAddPage} toggleRemoveMode={toggleRemoveMode} recover={recover} />
         </div>
     );
 }

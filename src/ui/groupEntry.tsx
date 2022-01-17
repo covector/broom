@@ -1,14 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { groupIsOn, toggleGroup } from "../functionality/groups_manage";
-
-interface RegisteredEntryProps {
-    imgUrl: string;
-    color: chrome.tabGroups.ColorEnum;
-    title: string;
-    id: number;
-    action: (id: number) => void;
-    forceUpdate: () => void;
-}
 
 const color2Hex = {
     "grey": "BDC1C6",
@@ -19,6 +9,54 @@ const color2Hex = {
     "pink": "FF8BCB",
     "purple": "D7AEFB",
     "cyan": "78D9EC"
+}
+
+interface GroupEntryProps {
+    imgUrl: string;
+    color: chrome.tabGroups.ColorEnum;
+    title: string;
+    action: () => void;
+    backIcon: () => JSX.Element;
+    className: string;
+    checkOn: () => boolean|Promise<boolean>;
+}
+
+export const GroupEntry = (props: GroupEntryProps) => {
+    let [on, setOn] = useState(false);
+    useEffect(() => {async () => { setOn(await props.checkOn()); }});
+
+    // block is for preventing more than 1 click before the ui is updated
+    let [block, setBlock] = useState(false);
+    async function onClick() {
+        if (block) {
+            await props.action();
+            setBlock(false);
+        }
+    }
+    useEffect(() => { onClick(); }, [block])
+
+    return(
+        <div className={"group-entry " + props.className + on ? " on" : ""}>
+            <div className="entry-tab-back" onClick={() => { if (!block) { setBlock(true); } }} style={{backgroundColor: `#${color2Hex[props.color]}`}}>
+                <div className="entry-tab-front">
+                    <div className="icon"><img src={props.imgUrl} /></div>
+                    <div className="title">{props.title}</div>
+                </div>
+            </div>
+            {props.backIcon()}
+        </div>
+    );
+}
+
+/*
+interface RegisteredEntryProps {
+    imgUrl: string;
+    color: chrome.tabGroups.ColorEnum;
+    title: string;
+    id: number;
+    isInRemoveMode: boolean;
+    action?: (id: number) => void;
+    forceUpdate: () => void;
 }
 
 export const RegisteredGroupEntry = (props: RegisteredEntryProps) => {
@@ -123,3 +161,4 @@ export const UnregisteredGroupEntry = (props: UnregisteredEntryProps) => {
         </div>
     );
 }
+*/
