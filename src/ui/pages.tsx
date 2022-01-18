@@ -17,11 +17,12 @@ export function RegisteredGroups (props: RegisteredGroupsProps) {
         title={group.title}
         imgUrl={group.favIconUrl}
         key={index}
-        action={async ()=>{
+        last={index == props.groups.length - 1}
+        action={async (last)=>{
             let unmounted = false;
             if (props.isInRemoveMode) {
                 await unregisterGroup(group.id);
-                unmounted = true;
+                unmounted = last;
             }
             else {
                 await toggleGroup(group.id);
@@ -57,10 +58,11 @@ export function UnregisteredGroups (props: UnregisteredGroupsProps) {
         title={group.title}
         imgUrl={props.imgUrls ? props.imgUrls[index] : ""}
         key={index}
-        action={async () => {
+        last={index == props.groups.length - 1}
+        action={async (last) => {
             await registerGroup(group.id);
             await props.forceUpdate();
-            return false;
+            return !last;
         }}
         className="unregistered"
         checkOn={() => false}

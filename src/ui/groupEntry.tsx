@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const color2Hex = {
     "grey": "BDC1C6",
@@ -15,10 +15,11 @@ interface GroupEntryProps {
     imgUrl: string;
     color: chrome.tabGroups.ColorEnum;
     title: string;
-    action: () => boolean|Promise<boolean>;
+    action: (boolean) => boolean|Promise<boolean>;
     backIcon: () => JSX.Element;
     className: string;
     checkOn: () => boolean|Promise<boolean>;
+    last: boolean;
 }
 
 export const GroupEntry = (props: GroupEntryProps) => {
@@ -28,7 +29,7 @@ export const GroupEntry = (props: GroupEntryProps) => {
     let [block, setBlock] = useState(false);
     async function onClick() {
         if (block) {
-            if (await props.action()) {
+            if (await props.action(props.last)) {
                 setBlock(false);
             }
         }
