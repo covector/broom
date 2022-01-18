@@ -15,7 +15,7 @@ interface GroupEntryProps {
     imgUrl: string;
     color: chrome.tabGroups.ColorEnum;
     title: string;
-    action: () => void;
+    action: () => boolean|Promise<boolean>;
     backIcon: () => JSX.Element;
     className: string;
     checkOn: () => boolean|Promise<boolean>;
@@ -23,142 +23,27 @@ interface GroupEntryProps {
 
 export const GroupEntry = (props: GroupEntryProps) => {
     let [on, setOn] = useState(false);
-    useEffect(() => {async () => { setOn(await props.checkOn()); }});
-
+    useEffect(() => {(async () => {  setOn(await props.checkOn()); })()});
     // block is for preventing more than 1 click before the ui is updated
     let [block, setBlock] = useState(false);
     async function onClick() {
         if (block) {
-            await props.action();
-            setBlock(false);
+            if (await props.action()) {
+                setBlock(false);
+            }
         }
     }
     useEffect(() => { onClick(); }, [block])
 
     return(
-        <div className={"group-entry " + props.className + on ? " on" : ""}>
+        <div className={"group-entry " + props.className + (on ? " on" : "")}>
             <div className="entry-tab-back" onClick={() => { if (!block) { setBlock(true); } }} style={{backgroundColor: `#${color2Hex[props.color]}`}}>
-                <div className="entry-tab-front">
+                <div className="entry-tab-front" style={{borderColor: `#${color2Hex[props.color]}`}}>
                     <div className="icon"><img src={props.imgUrl} /></div>
                     <div className="title">{props.title}</div>
                 </div>
             </div>
-            {props.backIcon()}
+            <props.backIcon />
         </div>
     );
 }
-
-/*
-interface RegisteredEntryProps {
-    imgUrl: string;
-    color: chrome.tabGroups.ColorEnum;
-    title: string;
-    id: number;
-    isInRemoveMode: boolean;
-    action?: (id: number) => void;
-    forceUpdate: () => void;
-}
-
-export const RegisteredGroupEntry = (props: RegisteredEntryProps) => {
-    let [block, setBlock] = useState(false);
-    let [on, setOn] = useState(false);
-    let [hover, setHover] = useState(false);
-    let [actionHover, setActionHover] = useState(false);
-    async function checkOn(id) {
-        setOn(await groupIsOn(id));
-    }
-    useEffect(() => { checkOn(props.id); });
-    async function toggle() {
-        if (block) {
-            await toggleGroup(props.id);
-            await props.forceUpdate();
-            setBlock(false);
-        }
-    }
-    useEffect(() => { toggle(); }, [block])
-    let onColor = (isOn) => `#${isOn ? color2Hex[props.color] : "FFFFFF"}`;
-    return(
-        <div className="groupEntry registeredEntry">
-            <div className={"box" + (on ? " on" : "")}
-            style={{
-                backgroundColor: onColor(on),
-                filter: `brightness(${hover ? 0.8 : 1})`
-            }}
-            onClick={() => {
-                if (!block) {
-                    setBlock(true);
-                }
-            }}
-            onMouseOver={() => {
-                setHover(true);
-            }}
-            onMouseLeave={() => {
-                setHover(false);
-            }}
-            >
-                <div className="icon"><img src={props.imgUrl} /></div>
-                <div className="colorBar" style={{backgroundColor: onColor(!on)}}></div>
-                <div className="title">{props.title}</div>
-                <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"
-                className="action"
-                onClick={(e) => {
-                    e.stopPropagation();
-                    props.action(props.id);
-                }}
-                onMouseOver={(e) => {
-                    e.stopPropagation();
-                    setHover(false);
-                    setActionHover(true);
-                }}
-                onMouseLeave={() => {
-                    setHover(true);
-                    setActionHover(false);
-                }}
-                >
-                    <path stroke={`#${on ? (actionHover ? "cccccc" : "ffffff") : (actionHover ? color2Hex[props.color] : "8c8c8c")}`} 
-                    d="M4 4L32 32M32 4L4 32" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-            </div>
-        </div>
-    );
-}
-
-interface UnregisteredEntryProps {
-    imgUrl: string;
-    color: chrome.tabGroups.ColorEnum;
-    title: string;
-    id: number;
-    action: (id: number) => void;
-}
-
-export const UnregisteredGroupEntry = (props: UnregisteredEntryProps) => {
-    let [actionHover, setActionHover] = useState(false);
-    let color = color2Hex[props.color];
-    return(
-        <div className="groupEntry unregisteredEntry">
-            <div className="box">
-                <div className="icon"><img src={props.imgUrl} /></div>
-                <div className="colorBar" style={{backgroundColor: `#${color}`}}></div>
-                <div className="title">{props.title}</div>
-                <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"
-                className="action"
-                onClick={async (e) => {
-                    e.stopPropagation();
-                    await props.action(props.id);
-                }}
-                onMouseOver={(e) => {
-                    e.stopPropagation();
-                    setActionHover(true);
-                }}
-                onMouseLeave={() => {
-                    setActionHover(false);
-                }}
-                >
-                    <path stroke={`#${actionHover ? color : "8c8c8c"}`} 
-                    d="M18 4V32M4 18H32" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-            </div>
-        </div>
-    );
-}
-*/

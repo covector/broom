@@ -59,7 +59,7 @@ function Popup() {
             <div className="topbar"></div>
             <RegisteredGroups groups={registeredGroups} forceUpdate={updateRegistered} isInRemoveMode={page == 2} />
             <UnregisteredGroups groups={unregisteredGroups} forceUpdate={updateUnregistered} imgUrls={imgUrls} isInAddPage={page == 1} />
-            <ToolBar toggleAddPage={toggleAddPage} toggleRemoveMode={toggleRemoveMode} recover={recover} />
+            <ToolBar toggleAddPage={toggleAddPage} toggleRemoveMode={toggleRemoveMode} recover={recover} adding={page == 1} removing={page == 2} />
         </div>
     );
 }

@@ -1,0 +1,324 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap');
+
+// colors
+$background-color: #262632;
+$button-color: #383246;
+$button-color-on: #F6F4F9;
+$button-color-hover: #463B61;
+$button-color-active: #9D93B2;
+$button-color-on-hover: #DFDCE4;
+$button-color-remove-hover: #E36363;
+$button-color-remove-active: #a74242;
+$font-color-remove: #d8dbe6;
+$button-color-on-active: #CECDD0;
+$font-color: #BAC2DF;
+$font-color-on: #444855;
+$scrollbar-color: #000;
+
+// metrics
+$width: 250px;
+$scrollbar-width: 7px;
+$height: 400px;
+$topbar-height: 20px;
+$toolbar-height: 50px;
+$tab-height: 58px;
+$tab-padding: 5px;
+$tab-radius: 8px;
+$tab-front-offset: 7px;
+$back-icon-width: 11px;
+$back-icon-padding: 7px;
+$toolbar-padding: 8px;
+$shake-magnitude: 0.5deg;
+
+@keyframes shake {
+    0% { transform: rotate(0deg); }
+    10% { transform: rotate(-1 * $shake-magnitude); }
+    20% { transform: rotate($shake-magnitude); }
+    30% { transform: rotate(0deg); }
+    40% { transform: rotate($shake-magnitude); }
+    50% { transform: rotate(-1 * $shake-magnitude); }
+    60% { transform:  rotate(0deg); }
+    70% { transform: rotate(-1 * $shake-magnitude); }
+    80% { transform:  rotate($shake-magnitude); }
+    90% { transform:  rotate(0deg); }
+    100% { transform: rotate(-1 * $shake-magnitude); }
+}
+
+@mixin shake-animation {
+    animation: shake 0.5s;
+    animation-iteration-count: infinite;
+}
+
+@mixin flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@mixin self-center-y {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+@mixin bg-color-transition {
+    transition: background-color 0.1s;
+}
+
+body {
+    margin: 0;
+    background-color: $background-color;
+    font-family: "Open Sans", sans-serif;
+}
+
+::-moz-selection {
+    background-color: transparent;
+}
+
+::selection {
+    background-color: transparent;
+}
+
+.popup {
+    height: $height;
+    width: $width;
+    box-sizing: border-box;
+}
+
+.topbar {
+    z-index: 2;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: $topbar-height;
+    background-color: $background-color;
+}
+
+.scrollbar {
+    &::-webkit-scrollbar {
+        width: $scrollbar-width;
+    }
+    
+    &::-webkit-scrollbar-track {
+        background-color: $background-color;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+        background-color: $scrollbar-color;
+        border-radius: $scrollbar-width;
+    }
+}
+
+.registered-groups,
+.unregistered-groups {
+    top: $topbar-height;
+    position: absolute;
+    height: $height - $topbar-height - $toolbar-height;
+    width: $width - $tab-padding;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: $background-color;
+}
+
+.group-entry {
+    width: $width - $tab-padding - $scrollbar-width;
+    height: $tab-height;
+    @include flex-center;
+
+    & > svg {
+        z-index: 1;
+        position: absolute;
+        width: $back-icon-width;
+        left: $width - 2 *$tab-padding - $back-icon-padding - $scrollbar-width - $back-icon-width;
+        stroke: $button-color-on;
+        pointer-events: none;
+    }
+
+    .entry-tab-back {
+        width: $width - 3 * $tab-padding - $scrollbar-width;
+        height: $tab-height - 2 * $tab-padding;
+        border-radius: $tab-radius;
+
+        &:hover{
+            cursor: pointer;
+
+            .entry-tab-front{
+                background-color: $button-color-hover;
+            }
+        }
+    
+        &:active .entry-tab-front{
+            background-color: $button-color-active;
+        }
+    }
+
+    .entry-tab-front{
+        width: $width - 3 * $tab-padding - $scrollbar-width - $tab-front-offset;
+        height: $tab-height - 2 * $tab-padding;
+        border-radius: $tab-radius;
+        background-color: $button-color;
+        box-sizing: border-box;
+        border: 1px solid;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        position: relative;
+        left: $tab-front-offset;
+        z-index: 2;
+        @include bg-color-transition;
+    }
+    
+    .icon {
+        height: 100%;
+        width: 21px;
+        margin-left: 10px;
+
+        img {
+            max-width: 100%;
+            min-width: 100%;
+            max-height: 100%;
+            @include self-center-y;
+        }
+    }
+
+    .title {
+        flex-grow: 1;
+        margin-left: 9px;
+        font-size: 12px;
+        color: $font-color;
+        font-weight: 700;
+    }
+
+    &.on {
+        .entry-tab-front {
+            background-color: $button-color-on;
+        }
+
+        .title {
+            color: $font-color-on;
+        }
+
+        &:hover .entry-tab-front{
+            background-color: $button-color-on-hover;
+
+        }
+
+        &:active .entry-tab-front{
+            background-color: $button-color-on-active;
+        }
+    }
+}
+
+.unregistered-groups {
+    z-index: 2;
+    transform: translateY(100%);
+    transition: transform 0.3s;
+
+    .group-entry .entry-tab-front{
+        width: $width - 3 * $tab-padding - $scrollbar-width - $tab-front-offset - $back-icon-width - 2 * $back-icon-padding;
+    }
+}
+
+.group-entry.remove {
+    @include shake-animation;
+    &:nth-child(2n) { animation-delay: -0.1s }  
+    &:nth-child(2n+1) { animation-delay: -0.3s }  
+    &:nth-child(3n) { animation-delay: -0.2s; }  
+    &:nth-child(5n) { animation-delay: -0.4s }  
+    &:nth-child(7n) { animation-delay: -0.15s }
+
+    .entry-tab-front{
+        transition: width 0.1s, background-color 0.1s;
+    }
+
+    &:hover{
+        .entry-tab-front{
+            width: $width - 3 * $tab-padding - $scrollbar-width - $tab-front-offset - $back-icon-width - 2 * $back-icon-padding;
+            background-color: $button-color-remove-hover;
+
+            .title {
+                color: $font-color-remove;
+            }
+        }
+    }
+
+    &:active{
+        .entry-tab-front{
+            background-color: $button-color-remove-active;
+        }
+    }
+}
+
+.toolbar {
+    position: absolute;
+    z-index: 3;
+    bottom: 0;
+    width: 100%;
+    height: $toolbar-height;
+    background-color: $background-color;
+    @include flex-center;
+
+    .toolbar-buttons {
+        width: $toolbar-height - 2 * $toolbar-padding;
+        height: $toolbar-height - 2 * $toolbar-padding;
+        background-color: $button-color;
+        border-radius: 10px;
+        @include flex-center;
+        @include bg-color-transition;
+
+        svg {
+            width: 40%;
+        }
+
+        &:not(:last-child) {
+            margin-right: 22px;
+        }
+
+        &.options-button svg {
+            fill: #BAC2DF;
+        }
+        &.add-button svg {
+            stroke: #7BDFCD;
+        }
+        &.remove-button svg {
+            stroke: #E26E6E;
+        }
+        &.undo-button svg {
+            stroke: #9D93B2;
+        }
+
+        &:hover {
+            background-color: $button-color-hover;
+            cursor: pointer;
+        }
+
+        &:active {
+            background-color: $button-color-active;
+        }
+
+        &.adding {
+            background-color: #324446;
+    
+            &:hover {
+                background-color: #456165;
+            }
+    
+            &:active {
+                background-color: #253133;
+            }
+        }
+    
+        &.removing {
+            background-color: #463232;
+    
+            &:hover {
+                background-color: #614545;
+            }
+    
+            &:active {
+                background-color: #342424;
+            }
+        }
+    }
+}

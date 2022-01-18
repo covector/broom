@@ -1,7 +1,7 @@
 {
     "name": "broom",
     "description": "A Chrome extension for managing tab groups",
-    "version": "1.1",
+    "version": "1.2",
     "manifest_version": 3,
     "icons": {
         "16": "img/broom_icon_16.png",

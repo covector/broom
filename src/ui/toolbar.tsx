@@ -5,22 +5,24 @@ interface ToolBarProps {
     toggleAddPage: () => void;
     toggleRemoveMode: () => void;
     recover: () => void;
+    adding: boolean;
+    removing: boolean;
 }
 
 export function ToolBar(props: ToolBarProps) {
     return(
     <div className="toolbar">
-        <div className="toolbar-buttons" onClick={() => chrome.runtime.openOptionsPage()}>
-            {GearIcon}
+        <div className="toolbar-buttons options-button" onClick={() => chrome.runtime.openOptionsPage()}>
+            <GearIcon />
         </div>
-        <div className="toolbar-buttons" onClick={props.toggleAddPage}>
-            {AddIcon}
+        <div className={"toolbar-buttons add-button" + (props.adding ? " adding" : "")} onClick={props.toggleAddPage}>
+            <AddIcon />
         </div>
-        <div className="toolbar-buttons" onClick={props.toggleRemoveMode}>
-            {RemoveIcon}
+        <div className={"toolbar-buttons remove-button" + (props.removing ? " removing" : "")} onClick={props.toggleRemoveMode}>
+            <RemoveIcon />
         </div>
-        <div className="toolbar-buttons" onClick={props.recover}>
-            {SpinArrowIcon}
+        <div className="toolbar-buttons undo-button" onClick={props.recover}>
+            <SpinArrowIcon />
         </div>
     </div>
     );

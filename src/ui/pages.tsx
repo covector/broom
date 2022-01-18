@@ -1,5 +1,5 @@
 import React from "react";
-import { groupIsOn } from "../functionality/groups_manage";
+import { groupIsOn, toggleGroup } from "../functionality/groups_manage";
 import { registerGroup, StoredGroup, unregisterGroup } from "../functionality/groups_store";
 import { GroupEntry } from "./groupEntry";
 import { AddIcon, RemoveIcon } from "./icons";
@@ -18,8 +18,16 @@ export function RegisteredGroups (props: RegisteredGroupsProps) {
         imgUrl={group.favIconUrl}
         key={index}
         action={async ()=>{
-            await unregisterGroup(group.id);
+            let unmounted = false;
+            if (props.isInRemoveMode) {
+                await unregisterGroup(group.id);
+                unmounted = true;
+            }
+            else {
+                await toggleGroup(group.id);
+            }
             await props.forceUpdate();
+            return !unmounted;
         }}
         checkOn={async () => {
             return await groupIsOn(group.id);
@@ -51,7 +59,8 @@ export function UnregisteredGroups (props: UnregisteredGroupsProps) {
         key={index}
         action={async () => {
             await registerGroup(group.id);
-            props.forceUpdate();
+            await props.forceUpdate();
+            return false;
         }}
         className="unregistered"
         checkOn={() => false}

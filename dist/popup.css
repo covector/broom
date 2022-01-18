@@ -1,168 +1,271 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap');
-
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap");
+@keyframes shake {
+  0% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(-0.5deg);
+  }
+  20% {
+    transform: rotate(0.5deg);
+  }
+  30% {
+    transform: rotate(0deg);
+  }
+  40% {
+    transform: rotate(0.5deg);
+  }
+  50% {
+    transform: rotate(-0.5deg);
+  }
+  60% {
+    transform: rotate(0deg);
+  }
+  70% {
+    transform: rotate(-0.5deg);
+  }
+  80% {
+    transform: rotate(0.5deg);
+  }
+  90% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-0.5deg);
+  }
+}
 body {
-    margin: 0;
-    background-color: #E5E5E5;
-    font-family: "Open Sans", sans-serif;
+  margin: 0;
+  background-color: #262632;
+  font-family: "Open Sans", sans-serif;
 }
 
 ::-moz-selection {
-    background-color: transparent;
+  background-color: transparent;
 }
 
 ::selection {
-    background-color: transparent;
+  background-color: transparent;
 }
 
-/* Popup */
 .popup {
-    height: 600px;
-    width: 250px;
-    box-sizing: border-box;
+  height: 400px;
+  width: 250px;
+  box-sizing: border-box;
 }
 
-/* TopBar */
-.topBar {
-    z-index: 2;
-    position: relative;
-    width: 100%;
-    height: 4px;
-    box-shadow: 0 0 10px 10px #E5E5E5;
+.topbar {
+  z-index: 2;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 20px;
+  background-color: #262632;
 }
 
-/* ToolBar */
-.toolBar {
-    z-index: 2;
-    position: relative;
-    width: 100%;
-    height: 40px;
-    background-color: #c5c5c5;
-    box-shadow: 0 0 10px 10px #E5E5E5;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-}
-
-.toolBar svg {
-    width: 20px;
-    height: 20px;
-    filter: brightness(1);
-    transition: filter 0.2s;
-}
-
-.toolBar svg:hover {
-    cursor: pointer;
-    filter: brightness(1.5);
-}
-
-/* ScrollBar */
 .scrollbar::-webkit-scrollbar {
-    width: 5px;
+  width: 7px;
 }
-   
 .scrollbar::-webkit-scrollbar-track {
-    background-color: #E5E5E5;
+  background-color: #262632;
 }
-   
 .scrollbar::-webkit-scrollbar-thumb {
-    background-color: #c4c4c4;
-    border-radius: 5px;
+  background-color: #000;
+  border-radius: 7px;
 }
 
-/* Registered Groups */
-.registeredGroups {
-    padding-top: 12px;
-    padding-bottom: 12px;
-    width: 246px;
-    height: 556px;
-    box-sizing: border-box;
-    overflow-y: auto;
-    overflow-x: hidden;
-    background-color: #E5E5E5;
+.registered-groups,
+.unregistered-groups {
+  top: 20px;
+  position: absolute;
+  height: 330px;
+  width: 245px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: #262632;
 }
 
-/* Unregistered Groups */
-.unregisteredGroups {
-    padding-top: 12px;
-    padding-bottom: 12px;
-    width: 246px;
-    height: 556px;
-    box-sizing: border-box;
-    overflow-y: auto;
-    overflow-x: hidden;
-    position: absolute;
-    top: 4px;
-    transform: translateY(100%);
-    transition: transform 0.3s;
-    background-color: #E5E5E5;
+.group-entry {
+  width: 238px;
+  height: 58px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.group-entry > svg {
+  z-index: 1;
+  position: absolute;
+  width: 11px;
+  left: 215px;
+  stroke: #F6F4F9;
+  pointer-events: none;
+}
+.group-entry .entry-tab-back {
+  width: 228px;
+  height: 48px;
+  border-radius: 8px;
+}
+.group-entry .entry-tab-back:hover {
+  cursor: pointer;
+}
+.group-entry .entry-tab-back:hover .entry-tab-front {
+  background-color: #463B61;
+}
+.group-entry .entry-tab-back:active .entry-tab-front {
+  background-color: #9D93B2;
+}
+.group-entry .entry-tab-front {
+  width: 221px;
+  height: 48px;
+  border-radius: 8px;
+  background-color: #383246;
+  box-sizing: border-box;
+  border: 1px solid;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: relative;
+  left: 7px;
+  z-index: 2;
+  transition: background-color 0.1s;
+}
+.group-entry .icon {
+  height: 100%;
+  width: 21px;
+  margin-left: 10px;
+}
+.group-entry .icon img {
+  max-width: 100%;
+  min-width: 100%;
+  max-height: 100%;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.group-entry .title {
+  flex-grow: 1;
+  margin-left: 9px;
+  font-size: 12px;
+  color: #BAC2DF;
+  font-weight: 700;
+}
+.group-entry.on .entry-tab-front {
+  background-color: #F6F4F9;
+}
+.group-entry.on .title {
+  color: #444855;
+}
+.group-entry.on:hover .entry-tab-front {
+  background-color: #DFDCE4;
+}
+.group-entry.on:active .entry-tab-front {
+  background-color: #CECDD0;
 }
 
-/* Group Entry */
-.groupEntry {
-    width: 240px;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.unregistered-groups {
+  z-index: 2;
+  transform: translateY(100%);
+  transition: transform 0.3s;
+}
+.unregistered-groups .group-entry .entry-tab-front {
+  width: 196px;
 }
 
-.groupEntry .box {
-    width: 230px;
-    height: 50px;
-    background-color: #FFFFFF;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    transition: background-color 0.2s, filter 0.2s;
+.group-entry.remove {
+  animation: shake 0.5s;
+  animation-iteration-count: infinite;
+}
+.group-entry.remove:nth-child(2n) {
+  animation-delay: -0.1s;
+}
+.group-entry.remove:nth-child(2n+1) {
+  animation-delay: -0.3s;
+}
+.group-entry.remove:nth-child(3n) {
+  animation-delay: -0.2s;
+}
+.group-entry.remove:nth-child(5n) {
+  animation-delay: -0.4s;
+}
+.group-entry.remove:nth-child(7n) {
+  animation-delay: -0.15s;
+}
+.group-entry.remove .entry-tab-front {
+  transition: width 0.1s, background-color 0.1s;
+}
+.group-entry.remove:hover .entry-tab-front {
+  width: 196px;
+  background-color: #E36363;
+}
+.group-entry.remove:hover .entry-tab-front .title {
+  color: #d8dbe6;
+}
+.group-entry.remove:active .entry-tab-front {
+  background-color: #a74242;
 }
 
-.registeredEntry .box:hover {
-    cursor: pointer;
+.toolbar {
+  position: absolute;
+  z-index: 3;
+  bottom: 0;
+  width: 100%;
+  height: 50px;
+  background-color: #262632;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-
-.groupEntry .box .icon {
-    height: 100%;
-    width: 25px;
-    margin-left: 10px;
+.toolbar .toolbar-buttons {
+  width: 34px;
+  height: 34px;
+  background-color: #383246;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.1s;
 }
-
-.groupEntry .box .icon img {
-    max-width: 100%;
-    min-width: 100%;
-    max-height: 100%;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
+.toolbar .toolbar-buttons svg {
+  width: 40%;
 }
-
-.groupEntry .box .colorBar {
-    width: 8px;
-    height: 36px;
-    margin-left: 8px;
-    border-radius: 5px;
+.toolbar .toolbar-buttons:not(:last-child) {
+  margin-right: 22px;
 }
-
-.groupEntry .box .title {
-    flex-grow: 1;
-    margin-left: 8px;
-    font-size: 13px;
-    color: #8c8c8c;
-    font-weight: 400;
-    transition: font-weight 0.2s;
+.toolbar .toolbar-buttons.options-button svg {
+  fill: #BAC2DF;
 }
-
-.groupEntry .box.on .title {
-    font-weight: 600;
-    color: #FFFFFF;
+.toolbar .toolbar-buttons.add-button svg {
+  stroke: #7BDFCD;
 }
-
-.groupEntry .box .action {
-    width: 10px;
-    height: 10px;
-    margin-right: 10px;
+.toolbar .toolbar-buttons.remove-button svg {
+  stroke: #E26E6E;
 }
-
-.unregisteredEntry .action:hover {
-    cursor: pointer;
+.toolbar .toolbar-buttons.undo-button svg {
+  stroke: #9D93B2;
+}
+.toolbar .toolbar-buttons:hover {
+  background-color: #463B61;
+  cursor: pointer;
+}
+.toolbar .toolbar-buttons:active {
+  background-color: #9D93B2;
+}
+.toolbar .toolbar-buttons.adding {
+  background-color: #324446;
+}
+.toolbar .toolbar-buttons.adding:hover {
+  background-color: #456165;
+}
+.toolbar .toolbar-buttons.adding:active {
+  background-color: #253133;
+}
+.toolbar .toolbar-buttons.removing {
+  background-color: #463232;
+}
+.toolbar .toolbar-buttons.removing:hover {
+  background-color: #614545;
+}
+.toolbar .toolbar-buttons.removing:active {
+  background-color: #342424;
 }
