@@ -12,16 +12,16 @@ interface ToolBarProps {
 export function ToolBar(props: ToolBarProps) {
     return(
     <div className="toolbar">
-        <div className="toolbar-buttons options-button" onClick={() => chrome.runtime.openOptionsPage()}>
+        <div title="Options" className="toolbar-buttons options-button" onClick={() => chrome.runtime.openOptionsPage()}>
             <GearIcon />
         </div>
-        <div className={"toolbar-buttons add-button" + (props.adding ? " adding" : "")} onClick={props.toggleAddPage}>
+        <div title="Register a group" className={"toolbar-buttons add-button" + (props.adding ? " adding" : "")} onClick={props.toggleAddPage}>
             <AddIcon />
         </div>
-        <div className={"toolbar-buttons remove-button" + (props.removing ? " removing" : "")} onClick={props.toggleRemoveMode}>
+        <div title="Unregister a group" className={"toolbar-buttons remove-button" + (props.removing ? " removing" : "")} onClick={props.toggleRemoveMode}>
             <RemoveIcon />
         </div>
-        <div className="toolbar-buttons undo-button" onClick={props.recover}>
+        <div title="Undo changes" className="toolbar-buttons undo-button" onClick={props.recover}>
             <SpinArrowIcon />
         </div>
     </div>
