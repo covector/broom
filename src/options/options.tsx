@@ -1,40 +1,21 @@
-import React, { useRef } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import { exportData, importData } from "../functionality/groups_data";
+import { exportData } from "../functionality/groups_data";
+import { CurrentGroups } from "./current_groups";
+import { ImportGroups } from "./import_groups";
 
 function Options() {
-    let textBoxRef = useRef(null);
-    async function importFromText() {
-        let data: string = textBoxRef.current.value;
-        if (data) {
-            let success = await importData(data);
-            if (success) {
-                alert("Import Successful!");
-            } else {
-                alert("Import Failed.")
-            }
-        }
-    }
-    async function copyToClipboard() {
+    let [displayData, setDisplayData] = useState([]);
+    async function refetch() {
         let data = await exportData();
-        navigator.clipboard.writeText(data);
+        setDisplayData(JSON.parse(data));
     }
-    async function download() {
-        let data = await exportData();
-        var blob = new Blob([data], {type: "application/json"});
-        var url = URL.createObjectURL(blob);
-        chrome.downloads.download({
-            url,
-            filename: "broom_data.json"
-        }, () => URL.revokeObjectURL(url));
-    }
+    useEffect(() => { refetch(); }, []);
     return(
-        <div>
-            <textarea ref={textBoxRef}></textarea>
-            <button onClick={importFromText}>Import</button>
-            <br />
-            <button onClick={copyToClipboard}>Copy to clipboard</button>
-            <button onClick={download}>Download as json</button>
+        <div className="options">
+            <div className="topbar"><img className="icon" src="./img/broom_icon.svg" /></div>
+            <ImportGroups forceRefresh={refetch} />
+            <CurrentGroups data={displayData} />
         </div>
     );
 }

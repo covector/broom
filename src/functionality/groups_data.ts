@@ -1,7 +1,7 @@
 import { setStored } from "../abstraction/store";
 import { readRegistered, StoredGroup } from "./groups_store";
 
-interface StoredGroupWithoutId {
+export interface StoredGroupWithoutId {
     color: chrome.tabGroups.ColorEnum;
     title: string;
     urls: string[];

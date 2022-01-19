@@ -1,0 +1,257 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap');
+
+// colors
+$background-color: #262632;
+$tab-color: #181820;
+$tab-text-color: #545A71;
+$tab-text-color-hover: #212128;
+$tab-text-color-active: #242430;
+$grad-color-1: #D7ADE5;
+$grad-color-2: #6161F4;
+
+// metrics
+$width: 800px;
+$ui-spacing: 25px;
+$section-spacing: 80px;
+
+@mixin scrollbar {
+    &::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+    }
+    
+    &::-webkit-scrollbar-track {
+        background-color: $background-color;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+        background-color: #000;
+        border-radius: 3px;
+    }
+}
+
+@mixin flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@mixin grad-button {
+    background: linear-gradient(to right, $grad-color-1, $grad-color-2);
+    
+    @include flex-center;
+    padding: 8px 14px;
+    border-radius: 4px;
+
+    .icon {
+        height: 14px;
+        stroke: $background-color;
+        stroke-width: 3px;
+        margin-right: 4px;
+        transition: stroke 0.1s;
+    }
+
+    .text {
+        font-size: 14px;
+        font-weight: 700;
+        color: $background-color;
+        transition: color 0.1s;
+    }
+
+    &:hover {
+        cursor: pointer;
+
+        .icon {
+            stroke: white;
+        }
+
+        .text {
+            color: white;
+        }
+    }
+
+    &:active {
+        .icon {
+            stroke: rgb(203, 203, 206);
+        }
+
+        .text {
+            color: rgb(203, 203, 206);
+        }
+    }
+}
+
+body {
+    margin: 0;
+    background-color: $background-color;
+    font-family: "Open Sans", sans-serif;
+
+    @include scrollbar;
+}
+
+.options {
+    width: 100%;
+    @include flex-center;
+    flex-direction: column;
+}
+
+.topbar {
+    width: 100%;
+    padding-top: 25px;
+    margin-bottom: 25px;
+
+    .icon {
+        width: 50px;
+        position: relative;
+        left: 20%;
+    }
+}
+
+.import,
+.current-groups {
+    width: $width;
+    @include flex-center;
+    flex-direction: column;
+    margin-bottom: $section-spacing;
+}
+
+h1 {
+    font-size: 2.25em;
+    font-weight: 700;
+    display: block;
+    align-self: baseline;
+    margin: 0;
+    margin-bottom: $ui-spacing;
+    background: linear-gradient(to right, $grad-color-1, $grad-color-2);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.import {
+    .import-textbox {
+        resize: none;
+        width: $width * 0.75;
+        height: $width * 0.3364;
+        border-radius: 8px;
+        border-style: none;
+        background-color: $tab-color;
+        margin-bottom: $ui-spacing;
+        color: $tab-text-color;
+        padding: 8px;
+        @include scrollbar;
+
+        &::-webkit-scrollbar-track {
+            background-color: #0000;
+        }
+    }
+
+    .import-button {
+        @include grad-button;
+        margin-bottom: $ui-spacing;
+    }
+}
+
+.current-groups {
+    .export {
+        @include flex-center();
+        margin-bottom: $ui-spacing;
+        
+        & > div{
+            @include grad-button;
+
+            &:first-child {
+                margin-right: 40px;
+            }
+        }
+    }
+}
+
+$tab-front-offset: 10px;
+
+.group-dropdown {
+    width: $width;
+    margin-bottom: 12px;
+
+    .group-dropdown-back {
+        width: $width - $tab-front-offset;
+        position: relative;
+        left: $tab-front-offset;
+        height: 58px;
+        border-radius: 30px;
+
+
+        .group-dropdown-front {
+            width: 100%;
+            position: relative;
+            left: -$tab-front-offset;
+            height: 100%;
+            border-radius: inherit;
+            background-color: $tab-color;
+            display: flex;
+            align-items: center;
+            box-sizing: border-box;
+            padding-left: 20px;
+            transition: background-color 0.1s;
+
+            .triangle {
+                height: 10px;
+                margin-right: 25px;
+                fill: $tab-text-color;
+            }
+
+            .icon {
+                height: 20px;
+                margin-right: 20px;
+            }
+
+            .title {
+                font-size: 14px;
+                color: $tab-text-color;
+                flex-grow: 1;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                cursor: default;
+                width: 1px;
+            }
+        }
+
+        &:hover{
+            .group-dropdown-front {
+                background-color: $tab-text-color-hover;
+            }
+        }
+        &:active{
+            .group-dropdown-front {
+                background-color: $tab-text-color-active;
+            }
+        }
+    }
+    
+    .group-dropdown-urls {
+        position: relative;
+        width: $width - 60px;
+        left: 30px;
+        overflow-y: hidden;
+        height: 0;
+        @include scrollbar;
+        
+        .group-dropdown-url {
+            color: #5a5a5c;
+            font-size: 12px;
+            padding-top: 3px;
+            padding-bottom: 3px;
+        }
+    }
+
+    &.toggled {
+        .triangle {
+            transform: rotate(90deg);
+        }
+
+        .group-dropdown-urls {
+            height: auto;
+        }
+    }
+}
