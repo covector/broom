@@ -146,9 +146,48 @@ h1 {
         }
     }
 
+    .import-control {
+        display: flex;
+        width: $width * 0.75;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $ui-spacing;
+    }
+
+    .sync-select {
+        @include flex-center;
+
+        .sync-text {
+            font-size: 13px;
+            color: #CCC;
+            margin-right: 10px;
+            margin-left: 10px;
+        }
+
+        .sync-button {
+            background-color: $tab-color;
+            width: 40px;
+            height: 20px;
+            border-radius: 10px;
+
+            div {
+                background: linear-gradient(to right, $grad-color-1, $grad-color-2);
+                width: 20px;
+                height: 20px;
+                position: relative;
+                border-radius: 10px;
+
+                transition: transform 0.1s;
+            }
+
+            &.sync div {
+                transform: translateX(100%);
+            }
+        }
+    }
+
     .import-button {
         @include grad-button;
-        margin-bottom: $ui-spacing;
     }
 }
 

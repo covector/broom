@@ -9,7 +9,8 @@ const color2Hex = {
     "green": "81C995",
     "pink": "FF8BCB",
     "purple": "D7AEFB",
-    "cyan": "78D9EC"
+    "cyan": "78D9EC",
+    "orange": "FCAD70"
 }
 
 export function GroupDropdown(props: { group: StoredGroupWithoutId }) {
